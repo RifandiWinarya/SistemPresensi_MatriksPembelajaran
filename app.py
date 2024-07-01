@@ -13,6 +13,7 @@ from flask import (
 )    
 from bson import ObjectId
 from werkzeug.utils import secure_filename
+from functools import wraps
 
 import os
 from os.path import join, dirname
@@ -34,6 +35,28 @@ app.config['UPLOAD_FOLDER'] = os.path.join(app.static_folder, 'foto')
 TOKEN_KEY = 'mytoken'
 SECRET_KEY = 'SMAN5_7321'
 app.secret_key = "SMAN5_7321"
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token_receive = request.cookies.get(TOKEN_KEY)
+        if not token_receive:
+            return redirect(url_for('login', msg='Login required'))
+
+        try:
+            payload = jwt.decode(token_receive, SECRET_KEY, algorithms=["HS256"])
+            user = db.users.find_one({'username': payload['username']})
+          
+            if user and user['role'] == 'admin':
+                return f(*args, **kwargs)
+            else:
+                return redirect(url_for('home'))
+        except jwt.ExpiredSignatureError:
+            return redirect(url_for('login', msg='Your login token has expired'))
+        except jwt.exceptions.DecodeError:
+            return redirect(url_for('login', msg='There was a problem logging you in'))
+
+    return decorated_function
 
 @app.route("/", methods=['GET'])
 def home():
@@ -84,6 +107,7 @@ def home():
         # return redirect(url_for("login"))
 
 @app.route("/admin", methods=['GET'])
+@admin_required
 def admin():
     token_receive = request.cookies.get(TOKEN_KEY)
     try:
@@ -985,7 +1009,9 @@ def cetak(id):
 #FITUR ADMIN#
 ## 
 ## 
+
 @app.route("/daftaruser", methods=['GET'])
+@admin_required
 def daftaruser():
     token_receive = request.cookies.get(TOKEN_KEY)
     try:
@@ -1006,6 +1032,7 @@ def daftaruser():
         return redirect(url_for("login", msg=msg))
 
 @app.route("/tambah_user", methods=['POST'])
+@admin_required
 def tambah_user():
     nama = request.form['nama']
     nip = request.form['nip']
@@ -1035,6 +1062,7 @@ def tambah_user():
         return jsonify({'status': 'error', 'message': str(e)})
 
 @app.route("/update_user", methods=['POST'])
+@admin_required
 def update_user():
     user_id = request.form['id']
     nama = request.form['nama']
@@ -1055,6 +1083,7 @@ def update_user():
 
 
 @app.route("/delete_user", methods=['POST'])
+@admin_required
 def delete_user():
     user_id = request.form['id']
     user_username = request.form['username']
@@ -1073,6 +1102,7 @@ def delete_user():
     return jsonify({'status': 'success'})
 
 @app.route('/tambah_kelas_admin', methods=['POST'])
+@admin_required
 def tambah_kelas_admin():
     namakelas = request.form['namakelas']
     print(namakelas)
@@ -1090,6 +1120,7 @@ def tambah_kelas_admin():
     return jsonify({'status': 'success'})
 
 @app.route("/daftarsiswa", methods=['GET'])
+@admin_required
 def daftarsiswa():
     token_receive = request.cookies.get(TOKEN_KEY)
     try:
@@ -1109,6 +1140,7 @@ def daftarsiswa():
         return redirect(url_for("login", msg=msg))
     
 @app.route("/detailkelas/<id>", methods=['GET'])
+@admin_required
 def detailkelas(id):
     token_receive = request.cookies.get(TOKEN_KEY)
     try:
@@ -1131,6 +1163,7 @@ def detailkelas(id):
         return redirect(url_for("login", msg=msg))
 
 @app.route('/tambah_siswa_admin/<id>', methods=['POST'])
+@admin_required
 def tambah_siswa_admin(id):
     # Ambil data siswa dari request
     id_untuk_siswa = ObjectId()
@@ -1183,6 +1216,7 @@ def tambah_siswa_admin(id):
         return jsonify({'status': 'error', 'message': 'Kelas tidak ditemukan'})
 
 @app.route('/hapus_kelas_admin', methods=['POST'])
+@admin_required
 def hapus_kelas_admin():
     try:
         id_kelas = ObjectId(request.form['id'])
@@ -1205,6 +1239,7 @@ def hapus_kelas_admin():
         return jsonify({'status': 'error', 'message': 'Terjadi kesalahan saat menghapus kelas'})
 
 @app.route('/edit_siswa_admin', methods=['POST'])
+@admin_required
 def edit_siswa_admin():
     try:
         id_siswa = request.form['id']
@@ -1248,6 +1283,7 @@ def edit_siswa_admin():
 
 
 @app.route('/hapus_siswa_admin', methods=['POST'])
+@admin_required
 def hapus_siswa_admin():
     try:
         id_siswa = ObjectId(request.form['id'])
@@ -1268,6 +1304,7 @@ def hapus_siswa_admin():
         return jsonify({'status': 'error', 'message': 'Terjadi kesalahan saat menghapus siswa'})
 
 @app.route("/daftarmapel", methods=['GET'])
+@admin_required
 def daftarmapel():
     token_receive = request.cookies.get(TOKEN_KEY)
     try:
@@ -1287,6 +1324,7 @@ def daftarmapel():
         return redirect(url_for("login", msg=msg))
 
 @app.route('/tambah_matkul', methods=['POST'])
+@admin_required
 def tambah_matkul():
     nama = request.form.get('nama')
     
@@ -1305,12 +1343,14 @@ def tambah_matkul():
         return jsonify({'status': 'fail', 'message': str(e)})
 
 @app.route('/hapus_matkul', methods=['POST'])
+@admin_required
 def hapus_matkul():
     id = request.form.get('id')
     db.mata_pelajaran.delete_one({'_id': ObjectId(id)})
     return jsonify({'status': 'success', 'message': 'Mata pelajaran berhasil dihapus!'})
 
 @app.route('/update_matkul', methods=['POST'])
+@admin_required
 def update_matkul():
     id = request.form.get('id')
     nama = request.form.get('nama')
