@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMAN 5</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+  <div class="main-container d-flex">
+    <!-- side bar -->
+    <div class="sidebar" id="side_nav">
+      <div class="header-box px-2 pt-3 pb-4">
+        <button class="btn d-md-none d-block close-btn px-1 py-0 align-text-top ms-auto"><i class="fa-solid fa-xmark fa-2xl" style="color: #f2f1ee;"></i></button>
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          style="margin-left: 10px; margin-top: 10px">
+          <img class="logo" src="{{ url_for('static', filename='icon/logo.png') }}" />
+          <span class="fs-5">SMA 5 MERANGIN</span>
+        </a>
+      </div>
+      <ul class="sidenav list-unstyled px-2">
+        <li class="">
+          <a href="/" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Dashbor.png') }}" alt="" />
+            &nbsp;Dashboard</a>
+        </li>
+        <li class="">
+          <a href="/absensi" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Absensi.png') }}" alt="" />
+            &nbsp;Absensi</a>
+        </li>
+        <li class="active">
+          <a href="/pembelajaran" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Pembelajaran.png') }}" alt="" /> &nbsp;Pembelajaran</a>
+        </li>
+      </ul>
+      <div class="sidebar-footer mb-5 px-2">
+        <a href="javascript:void(0);" onclick="sign_out()" class="text-decoration-none px-3 py-2 d-block text-white"><img src="{{ url_for('static', filename='icon/Keluar.png') }}" alt=""> &nbsp;Keluar</a>
+      </div>
+    </div>
+    <!-- side bar -->
+    <!-- isi -->
+    <div class="content">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <div class="d-md-none d-block">
+            <button class="btn px-1 py-0 open-btn"><img src="{{ url_for('static', filename='/icon/bar.png') }}"
+                alt="" /></button>
+          </div>
+          <a href="/pengaturan" class="d-flex text-black text-decoration-none align-text-top ms-auto"><img
+              class="user" src="{{ url_for('static', filename=profile_picture) }}" alt="" width="50" height="50" />
+            <h7 style="font-family: Poppins;margin-left:5px;">{{nama}}<br>{{nip}}</h7>
+          </a>
+        </div>
+      </nav>
+
+      <div class="dashboard px-4">
+        <h2 class="md-5 mt-4" id="title">Matriks Pembelajaran</h2>
+
+        <div class="shadow-lg p-3 mb-4 mt-3 ms-5  bg-body rounded">
+          <h6>Pencatatan Data Matriks Pembelajaran Semester Ganjil/Genap</h6>
+        </div>
+        {% for data in data_matriks %}
+        <div class="shadow-lg p-3 mb-2 ms-5  bg-body rounded">
+          <h6>
+            {{ data.nama }}
+            <a href="/pembelajaran2/{{data.id}}"  class="d-flex justify-content-end " style="float:right;">
+              <img src="{{ url_for('static', filename='icon/panah.png') }}" alt=""
+                style="width: 20px;height: 20px; margin-left: 50px;">
+            </a>
+          </h6>
+        </div>
+        {% endfor %}
+        <button type="button" class="btn border-primary mt-3 mb-3 text-primary btn-light float-end" data-bs-toggle="modal"
+          data-bs-target="#modalTambah">
+          <img src="{{ url_for('static', filename='icon/plus2.png') }}">Tambahkan Rekap
+        </button>
+
+        <!-- Modal Tambah-->
+        <div class="modal fade" id="modalTambah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-2"
+          aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Buat Rekap Matriks Pembelajaran</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form method="POST" action="/tambah_matriks">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label>Beri Nama Data Rekap Absensi</label>
+                    <input type="text" class="form-control" name="nama" placeholder="Beri Nama Data Rekap Absensi"
+                      required>
+                  </div>
+                  <div class="mb-3">
+                    <!-- {% for kelas in user.kelas %}
+                    <select class="form-select">
+                      <option value="">-- Pilih Data Absensi Kelas --</option>
+                      <option value=""> {{ kelas.nama_kelas }} ({{ kelas.mata_pelajaran }})</option>
+                    </select>
+                    {% endfor %} -->
+                    {% for kelas in user.kelas %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="{{ kelas.id }}" id="kelas{{ loop.index }}"
+                        name="kelas">
+                      <label class="form-check-label" for="kelas{{ loop.index }}">
+                        {{ kelas.nama_kelas }} ({{ kelas.mata_pelajaran }})
+                      </label>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                  <button type="submit" class="btn btn-primary">Tambah</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal Tambah -->
+      </div>
+    </div>
+    <!-- isi -->
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script>
+
+    function sign_out() {
+      $.removeCookie('mytoken', { path: '/' });
+      window.location.href = "/login";
+    }
+
+
+    $('.open-btn').on('click', function () {
+      $('.sidebar').addClass('active');
+    });
+    $('.close-btn').on('click', function () {
+      $('.sidebar').removeClass('active');
+    });
+
+  </script>
+</body>
+
+</html>

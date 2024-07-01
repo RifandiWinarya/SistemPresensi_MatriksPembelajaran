@@ -1,0 +1,16 @@
+body{
+	background: rgba(238, 238, 238, 1);
+}
+.content{
+	overflow: auto;
+}
+
+table {
+            border: 1px solid;
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            padding: 10px;
+        }

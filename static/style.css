@@ -1,0 +1,198 @@
+body {
+  background: rgba(238, 238, 238, 1);
+}
+
+#side_nav {
+  background: #28166f;
+  min-width: 250px;
+  max-width: 250px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out;
+  height: 100%;
+  position: fixed;
+}
+.sidenav{
+  padding: 2rem 0;
+    flex: 1 1 auto;
+  }
+.content {
+	min-height: 100vh;
+  margin-left: 250px;
+	width: 100%;
+	overflow: auto;
+}
+.content nav.navbar {
+  background-color: white;
+}
+.sidebar li.active {
+  background: #ff4949;
+  border-radius: 8px;
+}
+.sidebar li.active a,
+.sidebar li.active a:hover {
+  color: black;
+}
+
+.sidebar li a {
+  color: white;
+  margin-top: 10px;
+}
+.sidebar li.keluar a{
+	color: white;
+	/* margin-top: 400px; */
+}
+.header-box img.logo {
+  width: 50px;
+  height: 50px;
+  padding: 2px;
+  border-radius: 50%;
+  margin-right: 10px;
+  background-color: white;
+}
+.dashboard #title {
+  margin-left: 50px;
+}
+#papan card-body.h2 {
+  align-items: center;
+}
+
+.table {
+  width: 96%;
+  border-collapse: collapse;
+  border: 2;
+}
+tr,
+td, th {
+  padding: 8px;
+  text-align: center;
+  border-color: black;
+  /*border-bottom: 1px solid black;
+        border-right: 1px solid black;*/ /* Menambah garis vertikal */
+}
+.modal-content {
+  background-color: white;
+}
+.select-btn{
+	display: flex;
+	height: 40px;
+	padding: 0 16px;
+	justify-content: space-between;
+	align-items: center;
+	border-radius: 8px;
+	border: 1px solid;
+	border-color: grey;
+	cursor: pointer;
+}
+.select-btn .btn-text{
+	font-weight: 400;
+	font-size: 17px;
+}
+.select-btn .arrow-dwn{
+    display: flex;
+    height: 21px;
+    width: 21px;
+    color: black;
+    font-size: 14px;
+    border-radius: 50%;
+    background: white;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+.select-btn.open .arrow-dwn{
+    transform: rotate(-180deg);
+}
+.list-items{
+	position: relative;
+	margin-top: 15px;
+	background-color: white;
+	border-radius: 8px;
+	padding: 16px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+	display: none;
+}
+.select-btn.open ~ .list-items{
+	display: block;
+}
+.list-items .item{
+	list-style: none;
+	display: flex;
+	align-items: center;
+	height: 50px;
+	cursor: pointer;
+	transition: 0.3s;
+	padding: 0 15px;
+	border-radius: 8px;
+}
+.list-items .item:hover{
+	background-color: #e7edfe;
+}
+.item .item-text{
+	font-size: 16px;
+	font-weight: 400;
+}
+.item .checkbox{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 16px;
+	width: 16px;
+	border-radius: 4px;
+	margin-right: 12px;
+	border: 1.5px solid #c0c0c0;
+	transition: all 0.3s ease-in-out;
+}
+.checkbox .check-icon{
+	font-size: 11px;
+	transform: scale(0);
+	transition: all 0.3s ease-in-out;
+}
+.item.checked .check-icon{
+	transform: scale(1);
+}
+
+@media (max-width: 767px) {
+  #side_nav {
+    margin-left: -250px;
+    position: fixed;
+    min-height: 100%;
+    z-index: 1;
+  }
+  #side_nav.active {
+    margin-left: 0;
+  }
+  .content {
+    min-height: 100vh;
+    margin-left: 0px;
+    width: 100%;
+    overflow: auto;
+  }
+  .content nav.navbar {
+    background-color: #28166f;
+  }
+  .container-fluid a.navbar-brand {
+    color: white;
+  }
+  .container-fluid h7{
+    color: white;
+  }
+}
+
+.location-column {
+  max-width: 400px; /* Adjust the width as needed */
+  white-space: normal;
+  overflow-wrap: break-word; /* Break long words */
+}
+
+table {
+  border: 1px solid;
+  border-collapse: collapse;
+}
+
+td,
+th {
+  padding: 10px;
+  border: 1px solid;
+}

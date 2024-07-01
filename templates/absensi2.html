@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMAN 5</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+  <!-- Fontawesome CDN Link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+</head>
+
+<body>
+  <div class="main-container d-flex">
+    <!-- side bar -->
+    <div class="sidebar" id="side_nav">
+      <div class="header-box px-2 pt-3 pb-4">
+        <button class="btn d-md-none d-block close-btn px-1 py-0 align-text-top ms-auto"><i
+            class="fa-solid fa-xmark fa-2xl" style="color: #f2f1ee;"></i></button>
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          style="margin-left: 10px; margin-top: 10px;">
+          <img class="logo" src="{{ url_for('static', filename='icon/logo.png') }}" />
+          <span class="fs-5">SMA 5 MERANGIN</span>
+        </a>
+      </div>
+      <ul class="sidenav list-unstyled px-2">
+        <li class=""><a href="/" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Dashbor.png') }}" alt=""> &nbsp;Dashboard</a></li>
+        <li class="active"><a href="/absensi" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Absensi.png') }}" alt=""> &nbsp;Absensi</a></li>
+        <li class=""><a href="/pembelajaran" class="text-decoration-none px-3 py-2 d-block text-white"><img
+              src="{{ url_for('static', filename='icon/Pembelajaran.png') }}" alt=""> &nbsp;Pembelajaran</a></li>
+      </ul>
+      <div class="sidebar-footer mb-5 px-2">
+        <a href="javascript:void(0);" onclick="sign_out()" class="text-decoration-none px-3 py-2 d-block text-white"><img src="{{ url_for('static', filename='icon/Keluar.png') }}" alt=""> &nbsp;Keluar</a>
+      </div>
+    </div>
+    <!-- side bar -->
+
+    <!-- Isi -->
+    <div class="content">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <div class="d-md-none d-block">
+            <button class="btn px-1 py-0 open-btn">
+              <img src="{{ url_for('static', filename='icon/bar.png') }}" alt="">
+            </button>
+          </div>
+          <a href="/pengaturan" class="d-flex text-black text-decoration-none align-text-top ms-auto">
+            <img class="user" src="{{ url_for('static', filename=profile_picture) }}" alt="" width="50" height="50">
+            <h7 style="font-family: Poppins;margin-left:5px;">{{nama}}<br>{{nip}}</h7>
+          </a>
+        </div>
+      </nav>
+
+      <div class="dashboard px-4">
+        <div class="mt-4">
+          <a href="/absensi" class="text-decoration-none text-black">
+            <i class="fa-solid fa-arrow-left fa-xl" style="color: #000000;margin-top: 20px; float: left;"></i>
+          </a>
+          <h2 class=" " id="title">Absensi</h2>
+        </div>
+        <div class="shadow-lg p-3 mb-2 mt-3 ms-5 bg-body rounded">
+          <h6>Data Absensi Siswa</h6>
+        </div>
+        <div class="shadow-lg p-3 mb-5 ms-5 bg-body rounded">
+          <p>Nama Kelas : {{kelasUser.nama_kelas}}</p>
+          <p>Mapel : {{kelasUser.mata_pelajaran}}</p>
+          <p>Kelas : {{kelasUser.kelas}}</p>
+          <p id="kelas" style="display: none;">{{kelasUser.kelas}}</p>
+          <p id="idkelas" style="display: none;">{{id}}</p>
+          <hr>
+
+          <div class="table-responsive text-center">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>NISN</th>
+                  <th>Nama</th>
+                  <th>Jumlah Pertemuan</th>
+                  <th>Hadir</th>
+                  <th>Izin</th>
+                  <th>Sakit</th>
+                  <th>Alpha</th>
+                  <th>Kehadiran(%)</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for siswa in kelasUser.data_siswa %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ siswa.nisn }}</td>
+                  <td class="location-column">{{ siswa.nama }}</td>
+                  <td>{{ siswa.hadir + siswa.izin + siswa.sakit + siswa.alpha }}</td>
+                  <td>{{ siswa.hadir }}</td>
+                  <td>{{ siswa.izin }}</td>
+                  <td>{{ siswa.sakit }}</td>
+                  <td>{{ siswa.alpha }}</td>
+                  <td>
+                    {{ (siswa.hadir * 100 // (siswa.hadir + siswa.izin + siswa.sakit + siswa.alpha)) if (siswa.hadir +
+                    siswa.izin + siswa.sakit + siswa.alpha) > 0 else 0 }}%
+                  </td>
+                  <td>
+                    <button class="btn btn-primary"
+                      onclick="editSiswa('{{ siswa.nisn }}', '{{ siswa.nama }}','{{siswa.id}}')">Edit</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="footer d-flex justify-content-end mt-3">
+            <button class="btn btn-danger delete-button " data-id="{{ id }}" type="button"><i class="fa-solid fa-trash fa-xl me-2" style="color: #ffffff;"></i>Hapus Kelas</button>&nbsp;
+            <a href="/cetak_absen/{{id}}" target="_blank">
+              <button type="button" class="btn border-primary text-primary p-2">
+                <i class="fa-regular fa-file-pdf fa-xl me-2" style="color: #1c5ece;"></i>Cetak Rekap
+              </button>
+            </a>&nbsp;
+            <a href="/edit_absensi/{{id}}">
+              <button type="button" class="btn border-primary text-primary p-2"><i class="fa-solid fa-pen fa-xl me-2" style="color: #1c5ece;"></i>Edit </button>
+            </a>&nbsp;
+            <button type="button" class="btn border-primary text-primary p-2" data-bs-toggle="modal"
+              data-bs-target="#modalTambah">
+              <i class="fa-solid fa-plus fa-xl me-2" style="color: #1c5ece;"></i>
+              Tambah Siswa
+            </button>&nbsp;
+            <a href="/absensi3/{{id}}">
+              <button type="button" class="btn btn-primary p-2">
+                <i class="fa-solid fa-plus fa-xl me-2" style="color: #ffffff;"></i>Buat Absensi
+              </button>
+            </a>
+          </div>
+        </div>
+
+
+
+        <!-- Modal Edit -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Siswa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="editForm">
+                  <input type="hidden" id="oldNisn">
+                  <input type="hidden" id="idsiswaedit">
+                  <div class="form-group">
+                    <label for="nisn">NISN</label>
+                    <input type="number" class="form-control" id="nisn" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="nama">Nama</label>
+                    <input type="text" class="form-control" id="nama" required>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="deleteSiswa()">Delete</button>
+                <button type="button" class="btn btn-primary" onclick="updateSiswa()">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal Edit -->
+
+        <!-- Modal Tambah -->
+        <div class="modal fade" id="modalTambah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-2"
+          aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah Data Siswa</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form>
+                <input id="nama_kelas_ts" type="hidden" name="nama_kelas" value="{{ kelasUser.kelas }}">
+                <input id="id_kelas_ts" type="hidden" name="id_kelas" value="{{ id }}">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <input id="nama_ts" type="text" class="form-control" name="nama" placeholder="Nama" required>
+                  </div>
+                  <div class="mb-3">
+                    <input id="nisn_ts" type="number" class="form-control" name="nisn" placeholder="NISN" required>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                  <button type="button" class="btn btn-primary" onclick="tambah_siswa()">Tambah</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Tambah -->
+     <!-- Modal Hapus Kelas -->
+     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Hapus Kelas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Apakah Anda yakin ingin menghapus kelas ini?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-danger" id="delete-confirm">Hapus</button>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- Modal Hapus Kelas -->
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+
+    $(document).ready(function () {
+      $('.delete-button').click(function () {
+        const classId = $(this).data('id');
+
+        // Show the modal
+        $('#exampleModal').modal('show');
+
+        // Handle delete confirmation inside the modal
+        $('#delete-confirm').click(function () {
+          $.ajax({
+            url: '/delete_class/' + classId,
+            type: 'POST',
+            success: function (response) {
+              if (response.status === 'success') {
+                // Redirect to /absensi on successful deletion
+                window.location.href = "/absensi";
+              } else {
+                // Show alert if deletion fails
+                alert('Gagal menghapus kelas');
+              }
+            }
+          });
+
+          // Close the modal after handling delete
+          $('#exampleModal').modal('hide');
+        });
+      });
+    });
+
+    function sign_out() {
+      $.removeCookie('mytoken', { path: '/' });
+      window.location.href = "/login";
+    }
+
+    function editSiswa(nisn, nama,id) {
+      $('#idsiswaedit').val(id);
+      $('#oldNisn').val(nisn);
+      $('#nisn').val(nisn);
+      $('#nama').val(nama);
+      $('#editModal').modal('show');
+    }
+
+    function updateSiswa() {
+      const idkelas = $('#idkelas').text();
+      const oldNisn = $('#oldNisn').val();
+      const newNisn = $('#nisn').val();
+      const newNama = $('#nama').val();
+      const kelas = $('#kelas').text();
+
+      if (newNisn.trim() === '' || newNama.trim() === '') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Harap isi data dengan benar',
+          width: 300,
+        })
+        return;
+      }
+      $.ajax({
+        url: '/edit_siswa/' + idkelas,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ nisn: oldNisn, new_nisn: newNisn, new_nama: newNama, kelas: kelas, action: 'edit' }),
+        success: function (response) {
+          if (response.status === 'success') {
+            location.reload();
+          }
+        }
+      });
+    }
+
+    function deleteSiswa() {
+      const id = $('#idsiswaedit').val();
+      const kelas2 = $('#kelas').text();
+      const idkelas2 = $('#idkelas').text();
+      $.ajax({
+        url: '/edit_siswa/' + idkelas2,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: id, kelas2: kelas2, action: 'delete' }),
+        success: function (response) {
+          if (response.status === 'success') {
+            location.reload();
+          }
+        }
+      });
+    }
+
+    function tambah_siswa() {
+      let nama_kelas = $('#nama_kelas_ts').val();
+      let id = $('#id_kelas_ts').val();
+      let nama = $('#nama_ts').val();
+      let nisn = $('#nisn_ts').val();
+
+      $.ajax({
+        type: 'POST',
+        url: '/tambah_siswa/' + id,
+        data: {
+          nama_kelas: nama_kelas,
+          nama: nama,
+          nisn: nisn,
+        },
+        success: function (response) {
+          if (response.status === 'success') {
+            window.location.href = '/absensi/' + id;
+          }
+          else {
+            alert(response.message);
+          }
+        }
+      });
+    }
+
+    $('.open-btn').on('click', function () {
+      $('.sidebar').addClass('active');
+    });
+    $('.close-btn').on('click', function () {
+      $('.sidebar').removeClass('active');
+    });
+
+  </script>
+</body>
+
+</html>

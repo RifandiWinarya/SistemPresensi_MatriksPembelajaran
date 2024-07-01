@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMAN 5</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+   <!-- Fontawesome CDN Link -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+</head>
+
+<body>
+  <div class="main-container d-flex">
+    <!-- side bar -->
+    <div class="sidebar" id="side_nav">
+      <div class="header-box px-2 pt-3 pb-4">
+        <button class="btn d-md-none d-block close-btn px-1 py-0 align-text-top ms-auto"><i class="fa-solid fa-xmark fa-2xl" style="color: #f2f1ee;"></i></button>
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          style="margin-left: 10px; margin-top: 10px">
+          <img class="logo" src="{{ url_for('static', filename='icon/logo.png') }}" />
+          <span class="fs-5">SMA 5 MERANGIN</span>
+        </a>
+      </div>
+      <ul class="sidenav list-unstyled px-2">
+        <li class="">
+          <a href="/" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Dashbor.png') }}" alt="" />
+            &nbsp;Dashboard</a>
+        </li>
+        <li class="">
+          <a href="/absensi" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Absensi.png') }}" alt="" />
+            &nbsp;Absensi</a>
+        </li>
+        <li class="active">
+          <a href="/pembelajaran" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='icon/Pembelajaran.png') }}" alt="" /> &nbsp;Pembelajaran</a>
+        </li>
+      </ul>
+      <div class="sidebar-footer mb-5 px-2">
+        <a href="javascript:void(0);" onclick="sign_out()" class="text-decoration-none px-3 py-2 d-block text-white"><img src="{{ url_for('static', filename='icon/Keluar.png') }}" alt=""> &nbsp;Keluar</a>
+      </div>
+    </div>
+    <!-- side bar -->
+    <!-- isi -->
+    <div class="content">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <div class="d-md-none d-block">
+            <button class="btn px-1 py-0 open-btn"><img src="{{ url_for('static', filename='icon/bar.png') }}"
+                alt=""></button>
+          </div>
+          <a href="/pengaturan" class="d-flex text-black text-decoration-none align-text-top ms-auto"><img class="user"
+              src="{{ url_for('static', filename=profile_picture) }}" alt="" width="50" height="50">
+            <h7 style="font-family: Poppins; margin-left:5px;">{{nama}}<br>{{nip}}</h7>
+          </a>
+        </div>
+      </nav>
+
+      <div class="dashboard px-4">
+        <div class="mt-4">
+          <a href="/pembelajaran" class="text-decoration-none text-black">
+            <i class="fa-solid fa-arrow-left fa-xl" style="color: #000000; margin-top: 20px; float: left;"></i>
+          </a>
+          <h2 class="" id="title">Matriks Pembelajaran</h2>
+        </div>
+       
+
+        <div class="shadow-lg p-3 mb-2 mt-3 ms-5 bg-body rounded">
+          <h6>{{data_semester.nama}}</h6>
+          <p id="iddata" style="display: none;">{{data_semester.id}}</p>
+        </div>
+        <div class="shadow-lg p-3 mb-5 ms-5 bg-body rounded">
+          <div class="table-responsive text-center">
+            <table id="kategor"><br>
+              <thead>
+                <tr>
+                  <th rowspan="2">No</th>
+                  <th rowspan="2">Tanggal</th>
+                  <th rowspan="2">Jam</th>
+                  <th rowspan="2">
+                    <center>Kelas</center>
+                  </th>
+                  <th rowspan="2">
+                    <center>Mata Pelajaran</center>
+                  </th>
+                  <th rowspan="2">
+                    <center>Uraian Materi</center>
+                  </th>
+                  <th rowspan="2">
+                    <center>Keterlaksanaan</center>
+                  </th>
+                  <th colspan="3">
+                    <center>Kehadiran Siswa</center>
+                  </th>
+                  <th rowspan="2">
+                    <center>Nama Siswa yang Tidak Hadir</center>
+                  </th>
+                </tr>
+                <tr>
+                  <th>Hdr</th>
+                  <th>Tdk</th>
+                  <th>Jmlh</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for data in data_semester.data_rekap %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ data.tanggal }}</td>
+                  <td>{{ data.jam }}</td>
+                  <td>{{ data.kelas }}</td>
+                  <td>{{ data.mata_pelajaran }}</td>
+                  <td>{{ data.uraian }}</td>
+                  <td>{{ data.keterlaksanaan }}</td>
+                  <td>{{ data.kehadiran_siswa.hadir }}</td>
+                  <td>{{ data.kehadiran_siswa.tidak_hadir }}</td>
+                  <td>{{ data.kehadiran_siswa.jumlah }}</td>
+                  <td>
+                    {% if data.kehadiran_siswa.siswa_tidak_hadir %}
+                    {{ data.kehadiran_siswa.siswa_tidak_hadir | join(', ') }}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-danger mb-3 mt-3 me-3" onclick="hapus()"><i class="fa-solid fa-trash fa-xl me-2" style="color: #ffffff;"></i>Hapus</i></button>
+            <a href="/cetak/{{data_semester.id}}" target="_blank">
+              <button type="button" id="btn2pem" class="btn border-primary mb-3 text-primary btn-light mt-3">
+                <img src="{{ url_for('static', filename='icon/plus2.png') }}">Cetak Rekap
+              </button>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- Isi -->
+     <!-- Modal Hapus -->
+    <div class="modal fade" id="hapusModal" tabindex="-1" aria-labelledby="hapusModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="hapusModalLabel">Konfirmasi Hapus</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Apakah Anda yakin ingin menghapus data ini?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-danger" id="hapus-confirm">Hapus</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Hapus -->
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+  <script>
+    function sign_out() {
+      $.removeCookie('mytoken', {
+        path: '/'
+      });
+      window.location.href = "/login";
+    }
+
+    function hapus() {
+      // Get data id from element (assuming it's in a span with id 'iddata')
+      const iddata = $('#iddata').text();
+
+      // Show modal dialog for confirmation
+      $('#hapusModal').modal('show');
+
+      // Handle deletion confirmation inside the modal
+      $('#hapus-confirm').click(function () {
+        $.ajax({
+          url: '/hapusmatriks',
+          method: 'POST',
+          data: {
+            id: iddata
+          },
+          success: function (response) {
+            if (response.status === 'success') {
+              // Redirect to "/pembelajaran" on successful deletion
+              window.location.href = "/pembelajaran";
+            } else {
+              // Show alert if deletion fails
+              alert("Gagal Menghapus");
+            }
+          },
+          error: function () {
+            // Show alert if AJAX request fails
+            alert("Gagal Menghapus, terjadi kesalahan pada server.");
+          }
+        });
+
+        // Close the modal after handling delete
+        $('#hapusModal').modal('hide');
+      });
+    }
+
+    $('.open-btn').on('click', function () {
+      $('.sidebar').addClass('active');
+    });
+    $('.close-btn').on('click', function () {
+      $('.sidebar').removeClass('active');
+    });
+</script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {//suatu dokumen proses javascript mulai bekerja
+      var t= $('#kategor').DataTable({ 
+        columnDefs: [ //
+        {
+          searchable: false, //menonaktifkan pencarian kolom tertentu
+          orderable: false, //menonaktifkan penyortiran untuk kolom tertentu
+          targets: 0, //menentukan nomor kolom tempat konfigurasi diterapkan
+        },
+        ],
+        order: [[1, 'asc']], //mengurutkan menaik
+      });
+      //order.dt untu menangkap nama kolom ketika tabel diperbarui
+      //search.dt ubtuk memanggil fungsi tertentu saat pengguna mencari data ditable
+      t.on('order.dt search.dt', function () {
+        let i = 1;
+        //untuk menampilkan nilai atau indeks unik untuk setiap baris dalam tabel, terutama saat tabel diurutkan atau dicari.
+        t.cells(null, 0, { search: 'applied', order: 'applied' }).every(function (cell) { 
+          this.data(i++);
+        }); 
+      }).draw();
+    });
+  </script>
+</body>
+
+</html>

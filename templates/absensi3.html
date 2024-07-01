@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMAN 5</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Fontawesome CDN Link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+
+<body>
+  <div class="main-container d-flex">
+    <div class="sidebar" id="side_nav">
+      <div class="header-box px-2 pt-3 pb-4">
+        <button class="btn d-md-none d-block close-btn px-1 py-0 align-text-top ms-auto"><i
+            class="fa-solid fa-xmark fa-2xl" style="color: #f2f1ee;"></i></button>
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+          style="margin-left: 10px; margin-top: 10px;">
+          <img class="logo" src="{{ url_for('static', filename='/icon/logo.png') }}" />
+          <span class="fs-5">SMA 5 MERANGIN</span>
+        </a>
+      </div>
+      <ul class="sidenav list-unstyled px-2">
+        <li class="">
+          <a href="/index" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='/icon/Dashbor.png') }}" alt=""> &nbsp;Dashboard
+          </a>
+        </li>
+        <li class="active">
+          <a href="/absensi" class="text-decoration-none px-3 py-2 d-block text-white text-white">
+            <img src="{{ url_for('static', filename='/icon/Absensi.png') }}" alt=""> &nbsp;Absensi
+          </a>
+        </li>
+        <li class="">
+          <a href="/pembelajaran" class="text-decoration-none px-3 py-2 d-block text-white">
+            <img src="{{ url_for('static', filename='/icon/Pembelajaran.png') }}" alt=""> &nbsp;Pembelajaran
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer mb-5 px-2">
+        <a href="javascript:void(0);" onclick="sign_out()" class="text-decoration-none px-3 py-2 d-block text-white"><img src="{{ url_for('static', filename='icon/Keluar.png') }}" alt=""> &nbsp;Keluar</a>
+      </div>
+    </div>
+    <div class="content">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <div class="d-md-none d-block">
+            <button class="btn px-1 py-0 open-btn">
+              <img src="{{ url_for('static', filename='/icon/bar.png') }}" alt="">
+            </button>
+          </div>
+          <a href="/pengaturan" class="d-flex text-black text-decoration-none align-text-top ms-auto">
+            <img class="user" src="{{ url_for('static', filename='/icon/Aktor.png') }}" alt="" width="50" height="50">
+            <h7 style="font-family: Poppins;margin-left:5px;">{{nama}}<br>{{nip}}</h7>
+          </a>
+        </div>
+      </nav>
+
+      <div class="dashboard px-4">
+        <div class="mt-4">
+          <a href="/absensi/{{id}}" class="text-decoration-none text-black">
+            <i class="fa-solid fa-arrow-left fa-xl" style="color: #000000; margin-top: 20px; float: left;"></i>
+          </a>
+          <h2 class=" " id="title">Buat Absensi</h2>
+        </div>
+        <div class="shadow-lg p-3 mb-2 mt-3 ms-5 bg-body rounded">
+          Isi form untuk membuat absensi
+        </div>
+        <div class="shadow-lg p-3 mb-3 ms-5 bg-body rounded">
+          <form>
+            <div class="row">
+              <div class="col mb-3">
+                <label>Tanggal</label>
+                <input type="date" class="form-control" id="tgl" name="tgl">
+              </div>
+              <div class="col mb-3">
+                <label>Uraian Materi</label>
+                <textarea class="form-control" id="uraian" name="uraian" rows="1"
+                  placeholder="-- Isi Uraian Materi --"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col mb-3">
+                <label>Jam Pelajaran</label>
+                <input type="text" class="form-control" id="jam" name="jam" placeholder="-- Isi Jam Pelajaran --">
+              </div>
+              <div class=" col mb-3">
+                <label>Keterlaksanaan</label>
+                <div>
+                  <input class="form-check-input" type="radio" name="keterlaksanaan" id="flexRadioYes" value="Ya">
+                  <label class="form-check-label" for="flexRadioYes">Ya</label>
+                  <input class="form-check-input ms-4" type="radio" name="keterlaksanaan" id="flexRadioNo"
+                    value="Tidak">
+                  <label class="form-check-label" for="flexRadioNo">Tidak</label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="shadow-lg p-3 mb-2 mt-3 ms-5 bg-body rounded">
+          <h6>Data Absensi Siswa</h6>
+        </div>
+        <div class="shadow-lg p-3 mb-5 ms-5  bg-body rounded">
+          <p>Kelas : {{kelasUser.kelas}}</p>
+          <p>Mata Pelajaran : {{kelasUser.mata_pelajaran}}</p>
+          <p id="idkelas" style="display: none;">{{id}}</p>
+          <div class="table-responsive text-center">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th rowspan="2">No</th>
+                  <th rowspan="2">NISN</th>
+                  <th rowspan="2">Nama</th>
+                  <th colspan="4">
+                    <center>Kehadiran</center>
+                  </th>
+                </tr>
+                <tr>
+                  <th>Hadir</th>
+                  <th>Izin</th>
+                  <th>Sakit</th>
+                  <th>Alpha</th>
+                </tr>
+              </thead>
+              <tbody id="absensi-body">
+                {% for siswa in kelasUser.data_siswa %}
+                <tr class="siswa-row">
+                  <td>{{ loop.index }}</td>
+                  <td>{{ siswa.nisn }}</td>
+                  <td>{{ siswa.nama }}</td>
+                  <td><input class="form-check-input hadir-radio" type="radio" name="kehadiran-{{ loop.index }}"
+                      value="hadir"></td>
+                  <td><input class="form-check-input izin-radio" type="radio" name="kehadiran-{{ loop.index }}"
+                      value="izin"></td>
+                  <td><input class="form-check-input sakit-radio" type="radio" name="kehadiran-{{ loop.index }}"
+                      value="sakit"></td>
+                  <td><input class="form-check-input alpha-radio" type="radio" name="kehadiran-{{ loop.index }}"
+                      value="alpha"></td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td colspan="3">Total</td>
+                  <td id="totalHadir">0</td>
+                  <td id="totalIzin">0</td>
+                  <td id="totalSakit">0</td>
+                  <td id="totalAlpha">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="footer d-flex justify-content-end me-5">
+            <button type="button" class="btn btn-primary mb-3 p-2" id="saveBtn"><img class="" src="{{ url_for('static', filename='/icon/save.png') }}" alt=""">
+              Simpan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      function updateTotals() {
+        let totalHadir = 0;
+        let totalIzin = 0;
+        let totalSakit = 0;
+        let totalAlpha = 0;
+
+        $('.hadir-radio:checked').each(function () {
+          totalHadir++;
+        });
+        $('.izin-radio:checked').each(function () {
+          totalIzin++;
+        });
+        $('.sakit-radio:checked').each(function () {
+          totalSakit++;
+        });
+        $('.alpha-radio:checked').each(function () {
+          totalAlpha++;
+        });
+
+        $('#totalHadir').text(totalHadir);
+        $('#totalIzin').text(totalIzin);
+        $('#totalSakit').text(totalSakit);
+        $('#totalAlpha').text(totalAlpha);
+      }
+
+      $('input[type="radio"]').on('change', updateTotals);
+      updateTotals();
+
+      $('#saveBtn').click(function () {
+        // Validasi input form sebelum pengiriman
+        const tgl = $('#tgl').val();
+        const uraianAsli = $('#uraian').val();
+        const uraian = $('<div>').text(uraianAsli).html();
+        const jam = $('#jam').val();
+        const keterlaksanaan = $('input[name="keterlaksanaan"]:checked').val();
+        
+        // Periksa apakah semua data telah diisi
+        if (!tgl || !uraian || !jam || !keterlaksanaan) {
+          alert('Harap lengkapi semua kolom pada form sebelum menyimpan absensi.');
+          return; // Stop pengiriman jika ada data yang kosong
+        }
+
+        // Periksa apakah setiap siswa telah memiliki kehadiran tercatat
+        const missingAttendance = $('.siswa-row').filter(function () {
+          return $(this).find('input[type="radio"]:checked').length === 0;
+        });
+
+        if (missingAttendance.length > 0) {
+          alert('Pilih kehadiran untuk semua siswa sebelum menyimpan absensi.');
+          return; // Stop pengiriman jika ada siswa yang tidak memiliki kehadiran tercatat
+        }
+
+        // Data sudah lengkap, siapkan data untuk dikirim ke server
+        const idKelas = $('#idkelas').text();
+        const dataSiswa = [];
+        $('#absensi-body tr.siswa-row').each(function () {
+          const nisn = $(this).find('td:eq(1)').text();
+          const nama = $(this).find('td:eq(2)').text();
+          const kehadiran = $(this).find('input[type="radio"]:checked').val();
+          dataSiswa.push({ nisn, nama, kehadiran });
+        });
+
+        const absensiData = {
+          tgl,
+          uraian,
+          jam,
+          keterlaksanaan,
+          dataSiswa,
+          idKelas
+        };
+
+        // Kirim data ke server menggunakan AJAX
+        $.ajax({
+          type: 'POST',
+          url: '/save_absensi',
+          data: JSON.stringify(absensiData),
+          contentType: 'application/json',
+          success: function (response) {
+            window.location.href = '/absensi/' + idKelas;
+          },
+          error: function (error) {
+            alert('Gagal menyimpan absensi. Silakan coba lagi.');
+          }
+        });
+      });
+    });
+  </script>
+  <script type="text/javascript">
+    const selectBtn = document.querySelector(".select-btn"),
+      items = document.querySelectorAll(".item");
+
+    items.forEach(item => {
+      item.addEventListener("click", () => {
+        item.classList.toggle("checked");
+
+        let checked = document.querySelectorAll(".checked"),
+          btnText = document.querySelector(".btn-text");
+        if (checked && checked.length > 0) {
+          btnText.innerText = `${checked.length} Selected`;
+        } else {
+          btnText.innerText = "--- Pilih Jam ---";
+        }
+      });
+    })
+  </script>
+  <script>
+    $('.open-btn').on('click', function () {
+      $('.sidebar').addClass('active');
+    });
+    $('.close-btn').on('click', function () {
+      $('.sidebar').removeClass('active');
+    });
+  </script>
+</body>
+
+</html>

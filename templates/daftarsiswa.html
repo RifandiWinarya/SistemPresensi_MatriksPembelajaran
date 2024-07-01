@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMAN 5</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styleadmin.css') }}">
+</head>
+
+<body>
+  <!-- Side Bar -->
+  <nav class="navbar" style="background-color: #28166F;">
+    <div class="container-fluid">
+      <a class="navbar-brand align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" href="/admin">
+        <img src="{{ url_for('static', filename='icon/logo.png') }}" alt="Logo" width="30" height="30" style="position: absolute; transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%); margin-left: 20px; margin-top: 19px;" class="d-inline-block align-text-center">
+        <img src="{{ url_for('static', filename='icon/Ellipse.png') }}" alt="bg" width="40" height="40"
+          class="d-inline-block align-text-center text-white">
+        SMAN 5 MERANGIN
+      </a>
+      <ul class="nav nav-pills" style="margin-right: 100px;">
+        <li class="nav-item">
+          <a class="nav-link align-items-center text-white text-decoration-none" aria-current="page" href="/admin">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link align-items-center text-white text-decoration-none" href="/daftaruser">Daftar User</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active align-items-center text-white text-decoration-none" href="/daftarsiswa">Daftar
+            Siswa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link align-items-center text-white text-decoration-none" href="/daftarmapel">Daftar Mapel</a>
+        </li>
+        <li class="nav-item">
+          <a href="javascript:void(0);" onclick="sign_out()"
+            class="nav-link align-items-center text-white text-decoration-none">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Isi -->
+  <div class="content">
+    <div class="dashboard px-4">
+
+      <div class="md-5 mt-4 ms-5"><img
+          src="{{ url_for('static', filename='icon/home.png') }}" style="float: left;">
+        <h6>Home/Daftar Siswa</h6>
+      </div>
+      <div class="shadow-lg p-3 mb-5 ms-5 bg-body rounded">
+        <button type="button" id="btnDU" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
+          Tambah Kelas
+        </button> <br><br>
+        <h3>Daftar Kelas</h3>
+        <div class="container text-center">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Kelas</th>
+                <th>Jumlah Siswa</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for kelas in kelas_list %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ kelas.nama_kelas }}</td>
+                <td>{{ kelas.siswa|length }}</td>
+                <td>
+                  <a href="/detailkelas/{{ kelas._id }}"><img
+                      src="{{ url_for('static', filename='icon/search.png') }}"></a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Modal -->
+      <div class="modal fade" id="modalTambah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-2"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambah User Baru</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label>Nama Kelas</label>
+                  <input id="namakelas" type="text" class="form-control" name="namakelas" required>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+                <button onclick="tambahkelas()" type="button" class="btn btn-primary">Simpan Kelas</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+    crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+  <script>
+    function sign_out() {
+      $.removeCookie('mytoken', { path: '/' });
+      window.location.href = "/login";
+    }
+
+    function tambahkelas() {
+      let namakelasAsli = $("#namakelas").val();
+      let namakelas = $('<div>').text(namakelasAsli).html();
+
+      if (!namakelas) {
+        alert('Nama kelas harus diisi!');
+        return;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/tambah_kelas_admin',
+        data: {
+          namakelas: namakelas,
+        },
+        success: function (response) {
+          if (response.status === 'success') {
+            window.location.href = '/daftarsiswa';
+          } else {
+            alert(response.message);
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+
+</html>
